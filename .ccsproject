@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?ccsproject version="1.0"?>
+<projectOptions>
+	<deviceFamily value="C2000"/>
+	<isTargetManual value="true"/>
+	<origin value="D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/examples/c28/pinmux"/>
+	<connection value="common/targetdb/connections/TIXDS2XXUSB_Connection.xml"/>
+	<sourceLookupPath value=""/>
+</projectOptions>
