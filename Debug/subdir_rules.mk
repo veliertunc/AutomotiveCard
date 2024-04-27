@@ -5,62 +5,6 @@
 SHELL = cmd.exe
 
 # Each subdirectory must supply rules for building sources it contributes
-DSP2803x_CodeStartBranch.obj: D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/common/source/DSP2803x_CodeStartBranch.asm $(GEN_OPTS) | $(GEN_FILES) $(GEN_MISC_FILES)
-	@echo 'Building file: "$<"'
-	@echo 'Invoking: C2000 Compiler'
-	"D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/bin/cl2000" -v28 -ml -mt --cla_support=cla0 --include_path="D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/headers/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/common/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/libraries/math/IQmath/c28/include" --advice:performance=all --define=_DEBUG --define=LARGE_MODEL -g --diag_suppress=10063 --diag_warning=225 --issue_remarks --verbose_diagnostics --quiet --abi=coffabi --preproc_with_compile --preproc_dependency="$(basename $(<F)).d_raw" --include_path="D:/Workspace/C2000/AutomotiveCard/Debug/syscfg" $(GEN_OPTS__FLAG) "$<"
-	@echo 'Finished building: "$<"'
-	@echo ' '
-
-DSP2803x_DefaultIsr.obj: D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/common/source/DSP2803x_DefaultIsr.c $(GEN_OPTS) | $(GEN_FILES) $(GEN_MISC_FILES)
-	@echo 'Building file: "$<"'
-	@echo 'Invoking: C2000 Compiler'
-	"D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/bin/cl2000" -v28 -ml -mt --cla_support=cla0 --include_path="D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/headers/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/common/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/libraries/math/IQmath/c28/include" --advice:performance=all --define=_DEBUG --define=LARGE_MODEL -g --diag_suppress=10063 --diag_warning=225 --issue_remarks --verbose_diagnostics --quiet --abi=coffabi --preproc_with_compile --preproc_dependency="$(basename $(<F)).d_raw" --include_path="D:/Workspace/C2000/AutomotiveCard/Debug/syscfg" $(GEN_OPTS__FLAG) "$<"
-	@echo 'Finished building: "$<"'
-	@echo ' '
-
-DSP2803x_GlobalVariableDefs.obj: D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/headers/source/DSP2803x_GlobalVariableDefs.c $(GEN_OPTS) | $(GEN_FILES) $(GEN_MISC_FILES)
-	@echo 'Building file: "$<"'
-	@echo 'Invoking: C2000 Compiler'
-	"D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/bin/cl2000" -v28 -ml -mt --cla_support=cla0 --include_path="D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/headers/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/common/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/libraries/math/IQmath/c28/include" --advice:performance=all --define=_DEBUG --define=LARGE_MODEL -g --diag_suppress=10063 --diag_warning=225 --issue_remarks --verbose_diagnostics --quiet --abi=coffabi --preproc_with_compile --preproc_dependency="$(basename $(<F)).d_raw" --include_path="D:/Workspace/C2000/AutomotiveCard/Debug/syscfg" $(GEN_OPTS__FLAG) "$<"
-	@echo 'Finished building: "$<"'
-	@echo ' '
-
-DSP2803x_PieCtrl.obj: D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/common/source/DSP2803x_PieCtrl.c $(GEN_OPTS) | $(GEN_FILES) $(GEN_MISC_FILES)
-	@echo 'Building file: "$<"'
-	@echo 'Invoking: C2000 Compiler'
-	"D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/bin/cl2000" -v28 -ml -mt --cla_support=cla0 --include_path="D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/headers/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/common/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/libraries/math/IQmath/c28/include" --advice:performance=all --define=_DEBUG --define=LARGE_MODEL -g --diag_suppress=10063 --diag_warning=225 --issue_remarks --verbose_diagnostics --quiet --abi=coffabi --preproc_with_compile --preproc_dependency="$(basename $(<F)).d_raw" --include_path="D:/Workspace/C2000/AutomotiveCard/Debug/syscfg" $(GEN_OPTS__FLAG) "$<"
-	@echo 'Finished building: "$<"'
-	@echo ' '
-
-DSP2803x_PieVect.obj: D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/common/source/DSP2803x_PieVect.c $(GEN_OPTS) | $(GEN_FILES) $(GEN_MISC_FILES)
-	@echo 'Building file: "$<"'
-	@echo 'Invoking: C2000 Compiler'
-	"D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/bin/cl2000" -v28 -ml -mt --cla_support=cla0 --include_path="D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/headers/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/common/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/libraries/math/IQmath/c28/include" --advice:performance=all --define=_DEBUG --define=LARGE_MODEL -g --diag_suppress=10063 --diag_warning=225 --issue_remarks --verbose_diagnostics --quiet --abi=coffabi --preproc_with_compile --preproc_dependency="$(basename $(<F)).d_raw" --include_path="D:/Workspace/C2000/AutomotiveCard/Debug/syscfg" $(GEN_OPTS__FLAG) "$<"
-	@echo 'Finished building: "$<"'
-	@echo ' '
-
-DSP2803x_Sci.obj: D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/common/source/DSP2803x_Sci.c $(GEN_OPTS) | $(GEN_FILES) $(GEN_MISC_FILES)
-	@echo 'Building file: "$<"'
-	@echo 'Invoking: C2000 Compiler'
-	"D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/bin/cl2000" -v28 -ml -mt --cla_support=cla0 --include_path="D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/headers/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/common/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/libraries/math/IQmath/c28/include" --advice:performance=all --define=_DEBUG --define=LARGE_MODEL -g --diag_suppress=10063 --diag_warning=225 --issue_remarks --verbose_diagnostics --quiet --abi=coffabi --preproc_with_compile --preproc_dependency="$(basename $(<F)).d_raw" --include_path="D:/Workspace/C2000/AutomotiveCard/Debug/syscfg" $(GEN_OPTS__FLAG) "$<"
-	@echo 'Finished building: "$<"'
-	@echo ' '
-
-DSP2803x_SysCtrl.obj: D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/common/source/DSP2803x_SysCtrl.c $(GEN_OPTS) | $(GEN_FILES) $(GEN_MISC_FILES)
-	@echo 'Building file: "$<"'
-	@echo 'Invoking: C2000 Compiler'
-	"D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/bin/cl2000" -v28 -ml -mt --cla_support=cla0 --include_path="D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/headers/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/common/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/libraries/math/IQmath/c28/include" --advice:performance=all --define=_DEBUG --define=LARGE_MODEL -g --diag_suppress=10063 --diag_warning=225 --issue_remarks --verbose_diagnostics --quiet --abi=coffabi --preproc_with_compile --preproc_dependency="$(basename $(<F)).d_raw" --include_path="D:/Workspace/C2000/AutomotiveCard/Debug/syscfg" $(GEN_OPTS__FLAG) "$<"
-	@echo 'Finished building: "$<"'
-	@echo ' '
-
-DSP2803x_usDelay.obj: D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/common/source/DSP2803x_usDelay.asm $(GEN_OPTS) | $(GEN_FILES) $(GEN_MISC_FILES)
-	@echo 'Building file: "$<"'
-	@echo 'Invoking: C2000 Compiler'
-	"D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/bin/cl2000" -v28 -ml -mt --cla_support=cla0 --include_path="D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/headers/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/common/include" --include_path="D:/TI/c2000/C2000Ware_5_02_00_00/libraries/math/IQmath/c28/include" --advice:performance=all --define=_DEBUG --define=LARGE_MODEL -g --diag_suppress=10063 --diag_warning=225 --issue_remarks --verbose_diagnostics --quiet --abi=coffabi --preproc_with_compile --preproc_dependency="$(basename $(<F)).d_raw" --include_path="D:/Workspace/C2000/AutomotiveCard/Debug/syscfg" $(GEN_OPTS__FLAG) "$<"
-	@echo 'Finished building: "$<"'
-	@echo ' '
-
 %.obj: ../%.c $(GEN_OPTS) | $(GEN_FILES) $(GEN_MISC_FILES)
 	@echo 'Building file: "$<"'
 	@echo 'Invoking: C2000 Compiler'

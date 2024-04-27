@@ -62,7 +62,7 @@ void main(void)
     //
     // Step 2. Initalize GPIO: 
     //
-    //InitGpio();  // Skipped for this example  
+    InitGpio();
     
 
     //

@@ -50,6 +50,7 @@
 									<listOptionValue builtIn="false" value="${INSTALLROOT_2803x}/headers/include"/>
 									<listOptionValue builtIn="false" value="${INSTALLROOT_2803x}/common/include"/>
 									<listOptionValue builtIn="false" value="${INSTALLROOT_IQMATH}/include"/>
+									<listOptionValue builtIn="false" value="${PROJECT_LOC}/include"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.DEFINE.2084119380" name="Pre-define NAME (--define, -D)" superClass="com.ti.ccstudio.buildDefinitions.C2000_22.6.compilerID.DEFINE" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="${COM_TI_C2000WARE_SYMBOLS}"/>

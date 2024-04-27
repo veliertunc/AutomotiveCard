@@ -25,6 +25,7 @@ const iJTAG1             = scripting.addPeripheral("JTAG");
 iJTAG1.$name             = "MyJTAG1";
 const iSCI1              = scripting.addPeripheral("SCI");
 iSCI1.$name              = "UART1";
+iSCI1["SCIRXD@"].$assign = "GPIO28";
 iSCI1["SCITXD@"].$assign = "GPIO29";
 
 /**
@@ -32,12 +33,11 @@ iSCI1["SCITXD@"].$assign = "GPIO29";
  * version of the tool will not impact the pinmux you originally saw.  These lines can be completely deleted in order to
  * re-solve from scratch.
  */
-iECAN1.$suggestSolution           = "ECANA";
-iI2C1.$suggestSolution            = "I2CA";
-iJTAG1.$suggestSolution           = "JTAG";
-iJTAG1.TDO.$suggestSolution       = "GPIO37";
-iJTAG1.TDI.$suggestSolution       = "GPIO35";
-iJTAG1.TMS.$suggestSolution       = "GPIO36";
-iJTAG1.TCK.$suggestSolution       = "GPIO38";
-iSCI1.$suggestSolution            = "SCIA";
-iSCI1["SCIRXD@"].$suggestSolution = "GPIO28";
+iECAN1.$suggestSolution     = "ECANA";
+iI2C1.$suggestSolution      = "I2CA";
+iJTAG1.$suggestSolution     = "JTAG";
+iJTAG1.TDO.$suggestSolution = "GPIO37";
+iJTAG1.TDI.$suggestSolution = "GPIO35";
+iJTAG1.TMS.$suggestSolution = "GPIO36";
+iJTAG1.TCK.$suggestSolution = "GPIO38";
+iSCI1.$suggestSolution      = "SCIA";
