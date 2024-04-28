@@ -67,8 +67,13 @@ InitGpio(void)
     //
     GpioCtrlRegs.GPAMUX1.all = 0x0000;   // GPIO functionality GPIO0-GPIO15
     GpioCtrlRegs.GPAMUX2.all = 0x0000;   // GPIO functionality GPIO16-GPIO31
+    GpioCtrlRegs.GPAMUX2.bit.GPIO31 = 0x01;     // CANTXA
+    GpioCtrlRegs.GPAMUX2.bit.GPIO30 = 0x01;     // CANRXA
+    GpioCtrlRegs.GPAMUX2.bit.GPIO29 = 0x01;     // SCITXA
+    GpioCtrlRegs.GPAMUX2.bit.GPIO28 = 0x01;     // SCIRXA
     GpioCtrlRegs.GPBMUX1.all = 0x0000;   // GPIO functionality GPIO32-GPIO44
-    
+    GpioCtrlRegs.GPBMUX1.bit.GPIO33 = 0x01;     //SCLA
+    GpioCtrlRegs.GPBMUX1.bit.GPIO32 = 0x01;     //SDAA
     //
     // Dig.IO funct. applies to AIO2,4,6,10,12,14
     //
@@ -91,10 +96,10 @@ InitGpio(void)
     //
     // Pull-ups can be enabled or disabled.
     //
-    GpioCtrlRegs.GPAPUD.all = 0x0000;      // Pullup's enabled GPIO0-GPIO31
-    GpioCtrlRegs.GPBPUD.all = 0x0000;      // Pullup's enabled GPIO32-GPIO44
-    //GpioCtrlRegs.GPAPUD.all = 0xFFFF;    // Pullup's disabled GPIO0-GPIO31
-    //GpioCtrlRegs.GPBPUD.all = 0xFFFF;    // Pullup's disabled GPIO32-GPIO44
+    //GpioCtrlRegs.GPAPUD.all = 0x0000;      // Pullup's enabled GPIO0-GPIO31
+    //GpioCtrlRegs.GPBPUD.all = 0x0000;      // Pullup's enabled GPIO32-GPIO44
+    GpioCtrlRegs.GPAPUD.all = 0xFFFF;    // Pullup's disabled GPIO0-GPIO31
+    GpioCtrlRegs.GPBPUD.all = 0xFFFF;    // Pullup's disabled GPIO32-GPIO44
     EDIS;
 }
 

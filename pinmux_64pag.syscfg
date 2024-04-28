@@ -10,6 +10,7 @@
  */
 const iECAN1             = scripting.addPeripheral("ECAN");
 iECAN1.$name             = "CAN1";
+iECAN1.$assign           = "ECANA";
 iECAN1["CANRX@"].$assign = "GPIO30";
 iECAN1["CANTX@"].$assign = "GPIO31";
 const iGPIO1             = scripting.addPeripheral("GPIO");
@@ -19,25 +20,18 @@ iGPIO1["1"].$assign      = "GPIO11";
 iGPIO1.$name             = "CANBaudSelect";
 const iI2C1              = scripting.addPeripheral("I2C");
 iI2C1.$name              = "I2C1";
+iI2C1.$assign            = "I2CA";
 iI2C1["SDA@"].$assign    = "GPIO32";
 iI2C1["SCL@"].$assign    = "GPIO33";
 const iJTAG1             = scripting.addPeripheral("JTAG");
-iJTAG1.$name             = "MyJTAG1";
+iJTAG1.$name             = "JTAG";
+iJTAG1.$assign           = "JTAG";
+iJTAG1.TDO.$assign       = "GPIO37";
+iJTAG1.TDI.$assign       = "GPIO35";
+iJTAG1.TMS.$assign       = "GPIO36";
+iJTAG1.TCK.$assign       = "GPIO38";
 const iSCI1              = scripting.addPeripheral("SCI");
 iSCI1.$name              = "UART1";
+iSCI1.$assign            = "SCIA";
 iSCI1["SCIRXD@"].$assign = "GPIO28";
 iSCI1["SCITXD@"].$assign = "GPIO29";
-
-/**
- * Pinmux solution for unlocked pins/peripherals. This ensures that minor changes to the automatic solver in a future
- * version of the tool will not impact the pinmux you originally saw.  These lines can be completely deleted in order to
- * re-solve from scratch.
- */
-iECAN1.$suggestSolution     = "ECANA";
-iI2C1.$suggestSolution      = "I2CA";
-iJTAG1.$suggestSolution     = "JTAG";
-iJTAG1.TDO.$suggestSolution = "GPIO37";
-iJTAG1.TDI.$suggestSolution = "GPIO35";
-iJTAG1.TMS.$suggestSolution = "GPIO36";
-iJTAG1.TCK.$suggestSolution = "GPIO38";
-iSCI1.$suggestSolution      = "SCIA";
