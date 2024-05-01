@@ -1,13 +1,3 @@
-//###########################################################################
-//
-// FILE:   Example_2803x_Pinmux.c
-//
-// TITLE:  Empty Pinmux Project
-//
-//!  \addtogroup f2806x_example_list
-//!  <h1>Empty Pinmux</h1>
-//		
-//#############################################################################
 // $TI Release: $
 // $Release Date: $
 // $Copyright:
@@ -177,8 +167,7 @@ __interrupt void set_minus_isr(void)
 void InitInterrupts(void)
 {
     _initExtInterrupts();
-
-
+    _initTimerInterrupts();
 }
 
 void _initExtInterrupts(void)
