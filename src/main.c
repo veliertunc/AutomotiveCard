@@ -51,25 +51,23 @@
 //
 // Function Prototype
 //
-__interrupt void xint1_isr(void);
-__interrupt void xint5_isr(void);
-__interrupt void xint6_isr(void);
-__interrupt void xint8_isr(void);
-__interrupt void xint9_isr(void);
-__interrupt void xint10_isr(void);
-__interrupt void xint12_isr(void);
+__interrupt void set_plus_isr(void);
+__interrupt void set_minus_isr(void);
 
+__interrupt void cpu_timer0_isr(void);
+__interrupt void cpu_timer1_isr(void);
+__interrupt void cpu_timer2_isr(void);
+
+void _initExtInterrupts(void);
+void _initTimerInterrupts(void);
 void InitInterrupts(void);
 
 //
 // Globals
 //
-volatile Uint32 Xint1Count;
-volatile Uint32 Xint5Count;
-volatile Uint32 Xint8Count;
-volatile Uint32 Xint9Count;
-volatile Uint32 Xint10Count;
-volatile Uint32 Xint12Count;
+volatile Uint32 set_plus_cnt;
+volatile Uint32 set_minus_cnt;
+
 Uint32 LoopCount;
 
 //
@@ -140,121 +138,98 @@ void main(void)
 
     InitInterrupts();
 
+
+
     for(;;)
     {
         
     }
 }
 
-__interrupt void xint1_isr(void)
+//
+// xint1_isr -
+//
+__interrupt void set_plus_isr(void)
 {
-    Xint1Count++;
-    //Differentiate which external interrupt occured. (XINT1 or XINT2)
+    GpioDataRegs.GPBCLEAR.all = 0x4;   // GPIO34 is low
+    set_plus_cnt++;
+
     //
     // Acknowledge this interrupt to get more from group 1
     //
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
 }
 
-__interrupt void xint5_isr(void)
+//
+// xint2_isr -
+//
+__interrupt void set_minus_isr(void)
 {
-    Xint5Count++;
+    GpioDataRegs.GPBCLEAR.all = 0x4;   // GPIO34 is low
+    set_minus_cnt++;
 
     //
-    // Acknowledge this interrupt to get more from group 5
+    // Acknowledge this interrupt to get more from group 1
     //
-    PieCtrlRegs.PIEACK.all = PIEACK_GROUP5;
+    PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
 }
-
-__interrupt void xint8_isr(void)
-{
-    Xint8Count++;
-
-    //
-    // Acknowledge this interrupt to get more from group 8
-    //
-    PieCtrlRegs.PIEACK.all = PIEACK_GROUP8;
-}
-
-__interrupt void xint9_isr(void)
-{
-    Xint9Count++;
-
-    //
-    // Acknowledge this interrupt to get more from group 9
-    //
-    PieCtrlRegs.PIEACK.all = PIEACK_GROUP9;
-}
-
-__interrupt void xint10_isr(void)
-{
-    Xint10Count++;
-
-    //
-    // Acknowledge this interrupt to get more from group 10
-    //
-    PieCtrlRegs.PIEACK.all = PIEACK_GROUP10;
-}
-
-__interrupt void xint12_isr(void)
-{
-    Xint12Count++;
-
-    //
-    // Acknowledge this interrupt to get more from group 12
-    //
-    PieCtrlRegs.PIEACK.all = PIEACK_GROUP12;
-}
-
-
 
 void InitInterrupts(void)
 {
+    _initExtInterrupts();
+
+
+}
+
+void _initExtInterrupts(void)
+{
     EALLOW;
     // Write ISR functions to PIE Vector table
-    PieVectTable.XINT1 = &xint1_isr;
+    PieVectTable.XINT1 = &set_plus_isr;
+    PieVectTable.XINT1 = &set_minus_isr;
     EDIS;
-    Xint1Count = 0; // Count XINT1 interrupts
-    Xint5Count = 0;
-    Xint8Count = 0;
-    Xint9Count = 0;
-    Xint10Count = 0;
-    Xint12Count = 0;
+
+    set_plus_cnt = 0; // Count XINT1 interrupts
+    set_minus_cnt = 0;
     LoopCount = 0;  // Count times through idle loop
 
     //Enable groups and interrupts
     PieCtrlRegs.PIECTRL.bit.ENPIE = 1;          // Enable the PIE block
     PieCtrlRegs.PIEIER1.bit.INTx4 = 1;          // Enable PIE Group 1 INT4 (XInt1)
     PieCtrlRegs.PIEIER1.bit.INTx5 = 1;          // Enable PIE Group 1 INT5 (XInt2)
-
-    PieCtrlRegs.PIEIER5.bit.INTx1 = 1;          // Enable PIE Group 5 INT1 (QEP)
-
-    PieCtrlRegs.PIEIER8.bit.INTx1 = 1;          // Enable PIE Group 8 INT1 (I2CINT1A)
-    PieCtrlRegs.PIEIER8.bit.INTx2 = 1;          // Enable PIE Group 8 INT2 (I2CINT2A)
-
-    PieCtrlRegs.PIEIER9.bit.INTx1 = 1;          // Enable PIE Group 9 INT1 (SCIRXINTA)
-    PieCtrlRegs.PIEIER9.bit.INTx2 = 1;          // Enable PIE Group 9 INT2 (SCITXINTA)
-    PieCtrlRegs.PIEIER9.bit.INTx5 = 1;          // Enable PIE Group 9 INT5 (ECANA_INT0)
-    PieCtrlRegs.PIEIER9.bit.INTx6 = 1;          // Enable PIE Group 9 INT6 (ECANA_INT1)
-
-    PieCtrlRegs.PIEIER10.all = 0xFFFF;          // Enable PIE Group 10 All ADCs
-
-    PieCtrlRegs.PIEIER12.bit.INTx1 = 1;         // Enable PIE Group 12 INT1 (XINT3)
-
     IER |= M_INT1;                              // Enable CPU INT1
     EINT;                                       // Enable Global Interrupts
 
+    //
+    // GPIO8(Set-) and GPIO17(Set+) are inputs
+    //
     EALLOW;
-    GpioIntRegs.GPIOXINT1SEL.bit.GPIOSEL = 0;   // XINT1 is GPIO0
-    //GpioIntRegs.GPIOXINT2SEL.bit.GPIOSEL = 1;   // XINT2 is GPIO1
-    //GpioIntRegs.GPIOXINT3SEL.bit.GPIOSEL = 2;   // XINT3 is GPIO2
+    GpioCtrlRegs.GPAMUX2.bit.GPIO17 = 0;        // GPIO
+    GpioCtrlRegs.GPADIR.bit.GPIO17 = 0;         // input
+    GpioCtrlRegs.GPAQSEL2.bit.GPIO17 = 0;       // XINT1 Sync to SYSCLKOUT only
+
+    GpioCtrlRegs.GPAMUX1.bit.GPIO8 = 0;         // GPIO
+    GpioCtrlRegs.GPADIR.bit.GPIO8 = 0;          // input
+    GpioCtrlRegs.GPAQSEL1.bit.GPIO8 = 0;        // XINT2 Sync to SYSCLKOUT only
+    //GpioCtrlRegs.GPAQSEL1.bit.GPIO8 = 2;        // XINT2 Qual using 6 samples
+
+    //
+    // Each sampling window is 510*SYSCLKOUT
+    //
+    GpioCtrlRegs.GPACTRL.bit.QUALPRD0 = 0xFF;
+    EDIS;
+
+
+    EALLOW;
+    GpioIntRegs.GPIOXINT1SEL.bit.GPIOSEL = 17;   // XINT1 is GPIO17 -> Set +
+    GpioIntRegs.GPIOXINT2SEL.bit.GPIOSEL = 8;    // XINT2 is GPIO8 -> Set -
     EDIS;
 
     //
     // Configure XINT1
     //
     XIntruptRegs.XINT1CR.bit.POLARITY = 1;      // Rising edge interrupt
-
+    XIntruptRegs.XINT2CR.bit.POLARITY = 1;      // Rising edge interrupt
     //
     // Enable XINT1 and XINT2
     //
@@ -262,6 +237,102 @@ void InitInterrupts(void)
     XIntruptRegs.XINT2CR.bit.ENABLE = 1;        // Enable XINT2
     XIntruptRegs.XINT3CR.bit.ENABLE = 1;        // Enable XINT3
 }
+
+void _initTimerInterrupts(void)
+{
+    EALLOW;  // This is needed to write to EALLOW protected registers
+    PieVectTable.TINT0 = &cpu_timer0_isr;
+    PieVectTable.TINT1 = &cpu_timer1_isr;
+    PieVectTable.TINT2 = &cpu_timer2_isr;
+    EDIS;    // This is needed to disable write to EALLOW protected registers
+
+    //
+    // Step 4. Initialize the Device Peripheral. This function can be
+    //         found in DSP2803x_CpuTimers.c
+    //
+    InitCpuTimers();   // For this example, only initialize the Cpu Timers
+
+    //
+    // Configure CPU-Timer 0, 1, and 2 to interrupt every second:
+    // 60MHz CPU Freq, 1 second Period (in uSeconds)
+    //
+    ConfigCpuTimer(&CpuTimer0, 60, 1000000);
+    ConfigCpuTimer(&CpuTimer1, 60, 1000000);
+    ConfigCpuTimer(&CpuTimer2, 60, 1000000);
+
+    //
+    // To ensure precise timing, use write-only instructions to write to the
+    // entire register. Therefore, if any of the configuration bits are changed
+    // in ConfigCpuTimer and InitCpuTimers (in DSP2803x_CpuTimers.h), the
+    // below settings must also be updated.
+    //
+    CpuTimer0Regs.TCR.all = 0x4000; //write-only instruction to set TSS bit = 0
+    CpuTimer1Regs.TCR.all = 0x4000; //write-only instruction to set TSS bit = 0
+    CpuTimer2Regs.TCR.all = 0x4000; //write-only instruction to set TSS bit = 0
+
+    //
+    // Step 5. User specific code, enable interrupts:
+    //
+
+    //
+    // Enable CPU int1 which is connected to CPU-Timer 0, CPU int13
+    // which is connected to CPU-Timer 1, and CPU int 14, which is connected
+    // to CPU-Timer 2:
+    //
+    IER |= M_INT1;
+    IER |= M_INT13;
+    IER |= M_INT14;
+
+    //
+    // Enable TINT0 in the PIE: Group 1 interrupt 7
+    //
+    PieCtrlRegs.PIEIER1.bit.INTx7 = 1;
+
+    //
+    // Enable global Interrupts and higher priority real-time debug events:
+    //
+    EINT;   // Enable Global interrupt INTM
+    ERTM;   // Enable Global realtime interrupt DBGM
+}
+
+//
+// cpu_timer0_isr - Timer0 counter
+//
+__interrupt void
+cpu_timer0_isr(void)
+{
+   CpuTimer0.InterruptCount++;
+
+   //
+   // Acknowledge this interrupt to receive more interrupts from group 1
+   //
+   PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
+}
+
+//
+// cpu_timer1_isr - Timer1 counter
+//
+__interrupt void
+cpu_timer1_isr(void)
+{
+   //
+   // The CPU acknowledges the interrupt.
+   //
+   CpuTimer1.InterruptCount++;
+}
+
+//
+// cpu_timer2_isr - Timer2 counter
+//
+__interrupt void
+cpu_timer2_isr(void)
+{
+   //
+   // The CPU acknowledges the interrupt.
+   //
+   CpuTimer2.InterruptCount++;
+}
+
 
 //
 // End of File
