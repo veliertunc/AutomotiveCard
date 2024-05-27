@@ -72,15 +72,13 @@
 // - Set the pre-scaler for the high and low frequency peripheral clocks
 // - Enable the clocks to the peripherals
 //
-void 
-InitSysCtrl(void)
+void InitSysCtrl(void)
 {
     //
     // Disable the watchdog
     //
     DisableDog();
 
-    //
     //                                  *IMPORTANT*
     // The Device_cal function, which copies the ADC & oscillator calibration
     // values from TI reserved OTP into the appropriate trim registers, occurs
@@ -90,20 +88,16 @@ InitSysCtrl(void)
     // ADC MUST be enabled before calling this function.
     // See the device data manual and/or the ADC Reference
     // Manual for more information.
-    //
     EALLOW;
     SysCtrlRegs.PCLKCR0.bit.ADCENCLK = 1; // Enable ADC peripheral clock
     (*Device_cal)();
     SysCtrlRegs.PCLKCR0.bit.ADCENCLK = 0; // Return ADC clock to original state
     EDIS;
 
-    //
     // Select External Oscillator as Clock Source (default), and turn off
     // all unused clocks to conserve power.
-    //
     ExtOscSel();
 
-    //
     // Initialize the PLL control: PLLCR and CLKINDIV
     // DSP28_PLLCR and DSP28_CLKINDIV are defined in DSP2803x_Examples.h
     // 20MHz * 6/2 = 60 MHz
@@ -115,14 +109,11 @@ InitSysCtrl(void)
     InitPeripheralClocks();
 }
 
-//
 // InitFlash - This function initializes the Flash Control registers
 //                   CAUTION
 // This function MUST be executed out of RAM. Executing it
 // out of OTP/Flash will yield unpredictable results
-//
-void 
-InitFlash(void)
+void InitFlash(void)
 {
     EALLOW;
     
@@ -132,40 +123,28 @@ InitFlash(void)
     //
     FlashRegs.FOPT.bit.ENPIPE = 1;
 
-    //
     //                CAUTION
     // Minimum waitstates required for the flash operating
     // at a given CPU rate must be characterized by TI.
     // Refer to the datasheet for the latest information.
-    //
 
-    //
     // Set the Paged Waitstate for the Flash
-    //
     FlashRegs.FBANKWAIT.bit.PAGEWAIT = 2;
 
-    //
     // Set the Random Waitstate for the Flash
-    //
     FlashRegs.FBANKWAIT.bit.RANDWAIT = 2;
 
-    //
     // Set the Waitstate for the OTP
-    //
     FlashRegs.FOTPWAIT.bit.OTPWAIT = 3;
 
-    //
     //                CAUTION
     // ONLY THE DEFAULT VALUE FOR THESE 2 REGISTERS SHOULD BE USED
-    //
     FlashRegs.FSTDBYWAIT.bit.STDBYWAIT = 0x01FF;
     FlashRegs.FACTIVEWAIT.bit.ACTIVEWAIT = 0x01FF;
     EDIS;
 
-    //
     // Force a pipeline flush to ensure that the write to
     // the last register configured occurs before returning.
-    //
     __asm(" RPT #7 || NOP");
 }
 
@@ -173,8 +152,7 @@ InitFlash(void)
 // ServiceDog - This function resets the watchdog timer.
 // Enable this function for using ServiceDog in the application
 //
-void 
-ServiceDog(void)
+void ServiceDog(void)
 {
     EALLOW;
     SysCtrlRegs.WDKEY = 0x0055;
@@ -185,8 +163,7 @@ ServiceDog(void)
 //
 // DisableDog - This function disables the watchdog timer.
 //
-void 
-DisableDog(void)
+void DisableDog(void)
 {
     EALLOW;
     SysCtrlRegs.WDCR= 0x0068;
@@ -196,8 +173,7 @@ DisableDog(void)
 //
 // InitPll - This function initializes the PLLCR register.
 //
-void 
-InitPll(Uint16 val, Uint16 divsel)
+void InitPll(Uint16 val, Uint16 divsel)
 {
    volatile Uint16 iVol;
 
@@ -217,8 +193,8 @@ InitPll(Uint16 val, Uint16 divsel)
         
         //
         // Replace this line with a call to an appropriate
-        SystemShutdown(); //function.
-        //__asm("        ESTOP0");     // Uncomment for debugging purposes
+        // SystemShutdown(); //function.
+        __asm("        ESTOP0");     // Uncomment for debugging purposes
     }
 
     //
@@ -322,8 +298,7 @@ InitPll(Uint16 val, Uint16 divsel)
 // Note: If a peripherals clock is not enabled then you cannot
 // read or write to the registers for that peripheral
 //
-void 
-InitPeripheralClocks(void)
+void InitPeripheralClocks(void)
 {
     EALLOW;
 
@@ -384,8 +359,7 @@ InitPeripheralClocks(void)
 //
 #define SYSCTRL_CSM_STATUS_FAIL          0
 #define SYSCTRL_CSM_STATUS_SUCCESS       1
-Uint16
-CsmUnlock()
+Uint16 CsmUnlock()
 {
     volatile Uint16 temp;
 
@@ -437,8 +411,7 @@ CsmUnlock()
 // IntOsc1Sel - This function switches to Internal Oscillator 1 and turns off
 // all other clock sources to minimize power consumption
 //
-void 
-IntOsc1Sel (void) 
+void IntOsc1Sel (void)
 {
     EALLOW;
     SysCtrlRegs.CLKCTL.bit.INTOSC1OFF = 0;
@@ -457,8 +430,7 @@ IntOsc1Sel (void)
 //       INTOSC1 to INTOSC2, EXTOSC and XLCKIN must be turned OFF prior
 //       to switching to internal oscillator 1
 //
-void 
-IntOsc2Sel (void) 
+void IntOsc2Sel (void)
 {
     EALLOW;
 
@@ -483,8 +455,7 @@ IntOsc2Sel (void)
 // off all other clock sources to minimize power consumption. This option may 
 // not be available on all device packages
 //
-void 
-XtalOscSel (void)  
+void XtalOscSel (void)
 {
     EALLOW;
     SysCtrlRegs.CLKCTL.bit.XTALOSCOFF = 0;     // Turn on XTALOSC
@@ -509,23 +480,18 @@ XtalOscSel (void)
 // ExtOscSel - This function switches to External oscillator and turns off all 
 // other clock sources to minimize power consumption.
 //
-void 
-ExtOscSel (void)
+void ExtOscSel (void)
 {
     EALLOW;
     
-    //
     // 1-GPIO19 = XCLKIN, 0-GPIO38 = XCLKIN
-    //
     SysCtrlRegs.XCLK.bit.XCLKINSEL = 1;
     
     SysCtrlRegs.CLKCTL.bit.XTALOSCOFF = 1;   //Turn on XTALOSC
     SysCtrlRegs.CLKCTL.bit.XCLKINOFF = 0;    //Turn on XCLKIN
     SysCtrlRegs.CLKCTL.bit.OSCCLKSRC2SEL = 0; //Switch to external clock
     
-    //
     // Switch INTOSC1 to INTOSC2/ext clk
-    //
     SysCtrlRegs.CLKCTL.bit.OSCCLKSRCSEL = 1;
     
     SysCtrlRegs.CLKCTL.bit.WDCLKSRCSEL = 0;   //Clock Watchdog off of INTOSC1
@@ -534,7 +500,4 @@ ExtOscSel (void)
     EDIS;
 }
 
-//
 // End of file
-//
-

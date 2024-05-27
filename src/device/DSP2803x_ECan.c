@@ -49,33 +49,24 @@
 //
 // InitECan - This function initializes the eCAN module to a known state.
 //
-void 
-InitECan(void)
+void InitECan(void)
 {
     InitECana();
 }
 
-//
 // InitECana - Initialize eCAN-A module
-//
-void
-InitECana(void)   
+void InitECana(void)
 {
-    //
     // Create a shadow register structure for the CAN control registers.
     // This is needed, since only 32-bit access is allowed to these registers.
     // 16-bit access to these registers could potentially corrupt the register
     // contents or return false data.
     struct ECAN_REGS ECanaShadow;
 
-    //
     // EALLOW enables access to protected bits
-    //
     EALLOW;
 
-    //
     // Configure eCAN RX and TX pins for CAN operation using eCAN regs
-    //    
     ECanaShadow.CANTIOC.all = ECanaRegs.CANTIOC.all;
     ECanaShadow.CANTIOC.bit.TXFUNC = 1;
     ECanaRegs.CANTIOC.all = ECanaShadow.CANTIOC.all;
@@ -84,20 +75,16 @@ InitECana(void)
     ECanaShadow.CANRIOC.bit.RXFUNC = 1;
     ECanaRegs.CANRIOC.all = ECanaShadow.CANRIOC.all;
 
-    //
     // Configure eCAN for HECC mode - (reqd to access mailboxes 16 thru 31)
     // HECC mode also enables time-stamping feature
-    //
     ECanaShadow.CANMC.all = ECanaRegs.CANMC.all;
     ECanaShadow.CANMC.bit.SCB = 1;
     ECanaRegs.CANMC.all = ECanaShadow.CANMC.all;
 
-    //
     // Initialize all bits of 'Message Control Register' to zero
     // Some bits of MSGCTRL register come up in an unknown state.
     // For proper operation, all bits (including reserved bits) of MSGCTRL must
     // be initialized to zero
-    //
     ECanaMboxes.MBOX0.MSGCTRL.all = 0x00000000;
     ECanaMboxes.MBOX1.MSGCTRL.all = 0x00000000;
     ECanaMboxes.MBOX2.MSGCTRL.all = 0x00000000;
@@ -131,26 +118,20 @@ InitECana(void)
     ECanaMboxes.MBOX30.MSGCTRL.all = 0x00000000;
     ECanaMboxes.MBOX31.MSGCTRL.all = 0x00000000;
 
-    //
     // TAn, RMPn, GIFn bits are all zero upon reset and are cleared again
     // as a matter of precaution.
-    //
     ECanaRegs.CANTA.all = 0xFFFFFFFF;       // Clear all TAn bits
     ECanaRegs.CANRMP.all = 0xFFFFFFFF;      // Clear all RMPn bits
     ECanaRegs.CANGIF0.all = 0xFFFFFFFF;     // Clear all interrupt flag bits
     ECanaRegs.CANGIF1.all = 0xFFFFFFFF;
 
-    //
     // Configure bit timing parameters for eCANA
-    //
     ECanaShadow.CANMC.all = ECanaRegs.CANMC.all;
     ECanaShadow.CANMC.bit.CCR = 1 ;            // Set CCR = 1
     ECanaRegs.CANMC.all = ECanaShadow.CANMC.all;
 
-    //
     // Wait until the CPU has been granted permission to change 
     // the configuration registers
-    //
     do
     {
         ECanaShadow.CANES.all = ECanaRegs.CANES.all;
@@ -158,11 +139,9 @@ InitECana(void)
 
     ECanaShadow.CANBTC.all = 0;
     
-    //
     // The following block is only for 60 MHz SYSCLKOUT.
     // (30 MHz CAN module clock Bit rate = 1 Mbps)
     // See Note at end of file.
-    //
     ECanaShadow.CANBTC.bit.BRPREG = 2;
     ECanaShadow.CANBTC.bit.TSEG2REG = 1;
     ECanaShadow.CANBTC.bit.TSEG1REG = 6;
@@ -174,18 +153,14 @@ InitECana(void)
     ECanaShadow.CANMC.bit.CCR = 0 ;            // Set CCR = 0
     ECanaRegs.CANMC.all = ECanaShadow.CANMC.all;
 
-    //
     // Wait until the CPU no longer has permission to change
     // the configuration registers
-    //
     do
     {
         ECanaShadow.CANES.all = ECanaRegs.CANES.all;
     } while(ECanaShadow.CANES.bit.CCE != 0 );   // Wait for CCE bit to clear
 
-    //
     // Disable all Mailboxes
-    //
     ECanaRegs.CANME.all = 0;        // Required before writing the MSGIDs
 
     EDIS;
@@ -203,8 +178,7 @@ InitECana(void)
 // Only one GPIO pin shoudl be enabled for CANRXA operation.
 // Comment out other unwanted lines.
 //
-void 
-InitECanGpio(void)
+void InitECanGpio(void)
 {
    InitECanaGpio();
 }
@@ -212,8 +186,7 @@ InitECanGpio(void)
 //
 // InitECanaGpio - Configure eCAN-A module GPIO pins to function as eCAN pins
 //
-void 
-InitECanaGpio(void)
+void InitECanaGpio(void)
 {
     EALLOW;
 

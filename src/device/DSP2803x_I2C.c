@@ -49,8 +49,7 @@
 //
 // InitI2C - This function initializes the I2C to a known state.
 //
-void 
-InitI2C(void)
+void InitI2C(void)
 {
     //
     // Initialize I2C-A:

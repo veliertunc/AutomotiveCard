@@ -49,45 +49,48 @@
 //
 // Globals
 //
-struct CPUTIMER_VARS CpuTimer0;
+struct CPUTIMER_VARS CpuTimer0,CpuTimer1,CpuTimer2;
 //
 // InitCpuTimers - This function initializes all three CPU timers
 // to a known state.
 //
-void
-InitCpuTimers(void)
+void InitCpuTimers(void)
 {
-    //
-    // CPU Timer 0
+    // CPU Timer 0,1,2
     // Initialize address pointers to respective timer registers
-    //
     CpuTimer0.RegsAddr = &CpuTimer0Regs;
+    CpuTimer1.RegsAddr = &CpuTimer1Regs;
+    CpuTimer2.RegsAddr = &CpuTimer2Regs;
 
-    //
     // Initialize timer period to maximum
-    //
     CpuTimer0Regs.PRD.all  = 0xFFFFFFFF;
+    CpuTimer1Regs.PRD.all  = 0xFFFFFFFF;
+    CpuTimer2Regs.PRD.all  = 0xFFFFFFFF;
 
-    //
     // Initialize pre-scale counter to divide by 1 (SYSCLKOUT)
-    //
     CpuTimer0Regs.TPR.all  = 0;
     CpuTimer0Regs.TPRH.all = 0;
 
-    //
+    CpuTimer1Regs.TPR.all  = 0;
+    CpuTimer1Regs.TPR.all  = 0;
+
+    CpuTimer2Regs.TPRH.all = 0;
+    CpuTimer2Regs.TPRH.all = 0;
+
     // Make sure timer is stopped
-    //
     CpuTimer0Regs.TCR.bit.TSS = 1;
+    CpuTimer1Regs.TCR.bit.TSS = 1;
+    CpuTimer2Regs.TCR.bit.TSS = 1;
 
-    //
     // Reload all counter register with period value
-    //
     CpuTimer0Regs.TCR.bit.TRB = 1;
+    CpuTimer1Regs.TCR.bit.TRB = 1;
+    CpuTimer2Regs.TCR.bit.TRB = 1;
 
-    //
     // Reset interrupt counters
-    //
     CpuTimer0.InterruptCount = 0;
+    CpuTimer1.InterruptCount = 0;
+    CpuTimer2.InterruptCount = 0;
 }
 
 //
@@ -96,54 +99,38 @@ InitCpuTimers(void)
 // as "MHz" and the "Period" in "uSeconds". The timer is held in the stopped 
 // state after configuration.
 //
-void
-ConfigCpuTimer(struct CPUTIMER_VARS *Timer, float Freq, float Period)
+void ConfigCpuTimer(struct CPUTIMER_VARS *Timer, float Freq, float Period)
 {
     Uint32     PeriodInClocks;
     
-    //
     // Initialize timer period
-    //
     Timer->CPUFreqInMHz = Freq;
     Timer->PeriodInUSec = Period;
     PeriodInClocks = (long) (Freq * Period);
     
-    //
     // Counter decrements PRD+1 times each period
-    //
     Timer->RegsAddr->PRD.all = PeriodInClocks - 1;
     
-    //
     // Set pre-scale counter to divide by 1 (SYSCLKOUT)
-    //
     Timer->RegsAddr->TPR.all  = 0;
     Timer->RegsAddr->TPRH.all  = 0;
     
-    //
     // Initialize timer control register
-    //
 
-    //
     // 1 = Stop timer, 0 = Start/Restart Timer    
-    //
     Timer->RegsAddr->TCR.bit.TSS = 1;
     
     Timer->RegsAddr->TCR.bit.TRB = 1;       // 1 = reload timer
     Timer->RegsAddr->TCR.bit.SOFT = 0;
     Timer->RegsAddr->TCR.bit.FREE = 0;      // Timer Free Run Disabled
     
-    //
     // 0 = Disable/ 1 = Enable Timer Interrupt
-    //
     Timer->RegsAddr->TCR.bit.TIE = 1;   
     
-    //
     // Reset interrupt counter
-    //
     Timer->InterruptCount = 0;
 }
 
 //
 // End of File
 //
-

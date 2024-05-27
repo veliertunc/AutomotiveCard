@@ -52,8 +52,7 @@
 // For more details on configuring GPIO's as peripheral functions,
 // refer to the individual peripheral examples and/or GPIO setup example.
 //
-void 
-InitGpio(void)
+void InitGpio(void)
 {
     EALLOW;
 
