@@ -4,28 +4,28 @@
 
 SHELL = cmd.exe
 
-CG_TOOL_ROOT := D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS
+CG_TOOL_ROOT := C:/ti/ccs/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
-"./main.obj" \
 "./syscfg/f2803x_pinmux.obj" \
-"./src/DSP2803x_Adc.obj" \
-"./src/DSP2803x_CodeStartBranch.obj" \
-"./src/DSP2803x_CpuTimers.obj" \
-"./src/DSP2803x_DefaultIsr.obj" \
-"./src/DSP2803x_ECan.obj" \
-"./src/DSP2803x_EQep.obj" \
-"./src/DSP2803x_GlobalVariableDefs.obj" \
-"./src/DSP2803x_Gpio.obj" \
-"./src/DSP2803x_I2C.obj" \
-"./src/DSP2803x_PieCtrl.obj" \
-"./src/DSP2803x_PieVect.obj" \
-"./src/DSP2803x_Sci.obj" \
-"./src/DSP2803x_SysCtrl.obj" \
-"./src/DSP2803x_usDelay.obj" \
+"./src/device/DSP2803x_Adc.obj" \
+"./src/device/DSP2803x_CodeStartBranch.obj" \
+"./src/device/DSP2803x_CpuTimers.obj" \
+"./src/device/DSP2803x_DefaultIsr.obj" \
+"./src/device/DSP2803x_ECan.obj" \
+"./src/device/DSP2803x_EQep.obj" \
+"./src/device/DSP2803x_GlobalVariableDefs.obj" \
+"./src/device/DSP2803x_Gpio.obj" \
+"./src/device/DSP2803x_I2C.obj" \
+"./src/device/DSP2803x_PieCtrl.obj" \
+"./src/device/DSP2803x_PieVect.obj" \
+"./src/device/DSP2803x_Sci.obj" \
+"./src/device/DSP2803x_SysCtrl.obj" \
+"./src/device/DSP2803x_usDelay.obj" \
+"./src/main.obj" \
 "../28030_RAM_lnk.cmd" \
 "../DSP2803x_Headers_nonBIOS.cmd" \
 $(GEN_CMDS__FLAG) \
@@ -40,8 +40,10 @@ RMDIR := RMDIR /S/Q
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir_vars.mk
+-include src/device/subdir_vars.mk
 -include src/subdir_vars.mk
 -include subdir_rules.mk
+-include src/device/subdir_rules.mk
 -include src/subdir_rules.mk
 -include objects.mk
 
@@ -152,16 +154,16 @@ all: AutomotiveCard.out
 AutomotiveCard.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: C2000 Linker'
-	"D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/bin/cl2000" -v28 -ml -mt --cla_support=cla0 --advice:performance=all --define=_DEBUG --define=LARGE_MODEL -g --diag_suppress=10063 --diag_warning=225 --issue_remarks --verbose_diagnostics --quiet --abi=coffabi -z -m"AutomotiveCard.map" --stack_size=0X200 --warn_sections -i"D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/lib" -i"D:/TI/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include" -i"D:/Workspace/C2000/AutomotiveCard" -i"D:/TI/c2000/C2000Ware_5_02_00_00/device_support/f2803x/common/lib" -i"D:/TI/c2000/C2000Ware_5_02_00_00/libraries/math/IQmath/c28/lib" --reread_libs --issue_remarks --verbose_diagnostics --xml_link_info="Example_2803x_Pinmux_linkInfo.xml" --entry_point=code_start --rom_model -o "AutomotiveCard.out" $(ORDERED_OBJS)
+	"C:/ti/ccs/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/bin/cl2000" -v28 -ml -mt --cla_support=cla0 --advice:performance=all --define=_DEBUG --define=LARGE_MODEL -g --diag_suppress=10063 --diag_warning=225 --issue_remarks --verbose_diagnostics --quiet --abi=coffabi -z -m"AutomotiveCard.map" --stack_size=0X200 --warn_sections -i"C:/ti/ccs/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/lib" -i"C:/ti/ccs/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include" -i"C:/Users/veli.ertunc/Documents/Workspace/TI/AutomotiveCard" -i"C:/ti/c2000/C2000Ware_5_02_00_00/device_support/f2803x/common/lib" -i"C:/ti/c2000/C2000Ware_5_02_00_00/libraries/math/IQmath/c28/lib" --reread_libs --issue_remarks --verbose_diagnostics --xml_link_info="Example_2803x_Pinmux_linkInfo.xml" --entry_point=code_start --rom_model -o "AutomotiveCard.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(GEN_MISC_FILES__QUOTED)$(GEN_FILES__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" "syscfg\f2803x_pinmux.obj" "src\DSP2803x_Adc.obj" "src\DSP2803x_CodeStartBranch.obj" "src\DSP2803x_CpuTimers.obj" "src\DSP2803x_DefaultIsr.obj" "src\DSP2803x_ECan.obj" "src\DSP2803x_EQep.obj" "src\DSP2803x_GlobalVariableDefs.obj" "src\DSP2803x_Gpio.obj" "src\DSP2803x_I2C.obj" "src\DSP2803x_PieCtrl.obj" "src\DSP2803x_PieVect.obj" "src\DSP2803x_Sci.obj" "src\DSP2803x_SysCtrl.obj" "src\DSP2803x_usDelay.obj" 
-	-$(RM) "main.d" "syscfg\f2803x_pinmux.d" "src\DSP2803x_Adc.d" "src\DSP2803x_CpuTimers.d" "src\DSP2803x_DefaultIsr.d" "src\DSP2803x_ECan.d" "src\DSP2803x_EQep.d" "src\DSP2803x_GlobalVariableDefs.d" "src\DSP2803x_Gpio.d" "src\DSP2803x_I2C.d" "src\DSP2803x_PieCtrl.d" "src\DSP2803x_PieVect.d" "src\DSP2803x_Sci.d" "src\DSP2803x_SysCtrl.d" 
-	-$(RM) "src\DSP2803x_CodeStartBranch.d" "src\DSP2803x_usDelay.d" 
+	-$(RM) "syscfg\f2803x_pinmux.obj" "src\device\DSP2803x_Adc.obj" "src\device\DSP2803x_CodeStartBranch.obj" "src\device\DSP2803x_CpuTimers.obj" "src\device\DSP2803x_DefaultIsr.obj" "src\device\DSP2803x_ECan.obj" "src\device\DSP2803x_EQep.obj" "src\device\DSP2803x_GlobalVariableDefs.obj" "src\device\DSP2803x_Gpio.obj" "src\device\DSP2803x_I2C.obj" "src\device\DSP2803x_PieCtrl.obj" "src\device\DSP2803x_PieVect.obj" "src\device\DSP2803x_Sci.obj" "src\device\DSP2803x_SysCtrl.obj" "src\device\DSP2803x_usDelay.obj" "src\main.obj" 
+	-$(RM) "syscfg\f2803x_pinmux.d" "src\device\DSP2803x_Adc.d" "src\device\DSP2803x_CpuTimers.d" "src\device\DSP2803x_DefaultIsr.d" "src\device\DSP2803x_ECan.d" "src\device\DSP2803x_EQep.d" "src\device\DSP2803x_GlobalVariableDefs.d" "src\device\DSP2803x_Gpio.d" "src\device\DSP2803x_I2C.d" "src\device\DSP2803x_PieCtrl.d" "src\device\DSP2803x_PieVect.d" "src\device\DSP2803x_Sci.d" "src\device\DSP2803x_SysCtrl.d" "src\main.d" 
+	-$(RM) "src\device\DSP2803x_CodeStartBranch.d" "src\device\DSP2803x_usDelay.d" 
 	-$(RMDIR) $(GEN_MISC_DIRS__QUOTED)
 	-@echo 'Finished clean'
 	-@echo ' '

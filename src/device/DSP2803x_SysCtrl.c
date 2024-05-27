@@ -48,8 +48,8 @@
 #include "DSP2803x_Device.h"     // Headerfile Include File
 #include "DSP2803x_Examples.h"   // Examples Include File
 
-#define PLLCR       6
-#define PLL_DIV     2
+#define PLLCR_CONST        6
+#define PLL_DIV_CONST     2
 
 //
 // Functions that will be run from RAM need to be assigned to
@@ -107,7 +107,7 @@ InitSysCtrl(void)
     // Initialize the PLL control: PLLCR and CLKINDIV
     // DSP28_PLLCR and DSP28_CLKINDIV are defined in DSP2803x_Examples.h
     // 20MHz * 6/2 = 60 MHz
-    InitPll(PLLCR,PLL_DIV);
+    InitPll(PLLCR_CONST,PLL_DIV_CONST);
     
     //
     // Initialize the peripheral clocks
@@ -217,7 +217,7 @@ InitPll(Uint16 val, Uint16 divsel)
         
         //
         // Replace this line with a call to an appropriate
-        SystemShutdown(); function.
+        SystemShutdown(); //function.
         //__asm("        ESTOP0");     // Uncomment for debugging purposes
     }
 
@@ -239,14 +239,12 @@ InitPll(Uint16 val, Uint16 divsel)
     if (SysCtrlRegs.PLLCR.bit.DIV != val)
     {
         EALLOW;
-        
         //
         // Before setting PLLCR turn off missing clock detect logic
         //
         SysCtrlRegs.PLLSTS.bit.MCLKOFF = 1;
         SysCtrlRegs.PLLCR.bit.DIV = val;
         EDIS;
-
         //
         // Optional: Wait for PLL to lock.
         //
