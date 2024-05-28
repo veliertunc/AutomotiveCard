@@ -9,25 +9,22 @@
 #define INCLUDE_MAIN_H_
 
 // Included Files
-#include "DSP28x_Project.h"     // Device Headerfile and Examples Include File
-#include "f2803x_pinmux.h"
 #include <stdint.h>
 #include <stdbool.h>
+
+#include "DSP28x_Project.h"     // Device Headerfile and Examples Include File
+#include "f2803x_pinmux.h"
+
+#include "timer.h"
+#include "gpio.h"
+#include "external_interrupt.h"
+#include "i2c.h"
 // Defines
 #define DELAY (CPU_RATE/1000*6*510)  //Qual period at 6 samples
 
 // Function Prototype
-__interrupt void set_plus_isr(void);
-__interrupt void set_minus_isr(void);
 
-__interrupt void cpu_timer0_isr(void);
-__interrupt void cpu_timer1_isr(void);
-__interrupt void cpu_timer2_isr(void);
-
-void _initExtInterrupts(void);
-void _initTimerInterrupts(void);
 void InitInterrupts(void);
 
-void HandleGPIOs(void);
 
 #endif /* INCLUDE_MAIN_H_ */

@@ -43,19 +43,14 @@
 //
 // Included Files
 //
-#include "DSP2803x_Device.h"     // DSP28 Headerfile Include File
-#include "DSP2803x_Examples.h"   // DSP28 Examples Include File
+#include "can.h"
+
 
 //
-// InitECan - This function initializes the eCAN module to a known state.
+// InitCANA - This function initializes the eCAN module to a known state.
+// @param IsCANBaudSelect : Baud rate is 500K if true, 250K otherwise.
 //
-void InitECan(void)
-{
-    InitECana();
-}
-
-// InitECana - Initialize eCAN-A module
-void InitECana(void)
+void InitCANA(bool IsCANBaudSelect)
 {
     // Create a shadow register structure for the CAN control registers.
     // This is needed, since only 32-bit access is allowed to these registers.

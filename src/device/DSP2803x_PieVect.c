@@ -234,8 +234,7 @@ const struct PIE_VECT_TABLE PieVectTableInit = {
 // InitPieVectTable - This function initializes the PIE vector table
 // to a known state. This function must be executed after boot time.
 //
-void 
-InitPieVectTable(void)
+void InitPieVectTable(void)
 {
     int16	i;
     Uint32 *Source = (void *) &PieVectTableInit;

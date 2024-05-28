@@ -11,20 +11,19 @@ GEN_CMDS__FLAG :=
 
 ORDERED_OBJS += \
 "./syscfg/f2803x_pinmux.obj" \
-"./src/device/DSP2803x_Adc.obj" \
 "./src/device/DSP2803x_CodeStartBranch.obj" \
-"./src/device/DSP2803x_CpuTimers.obj" \
 "./src/device/DSP2803x_DefaultIsr.obj" \
 "./src/device/DSP2803x_ECan.obj" \
-"./src/device/DSP2803x_EQep.obj" \
 "./src/device/DSP2803x_GlobalVariableDefs.obj" \
-"./src/device/DSP2803x_Gpio.obj" \
-"./src/device/DSP2803x_I2C.obj" \
 "./src/device/DSP2803x_PieCtrl.obj" \
 "./src/device/DSP2803x_PieVect.obj" \
 "./src/device/DSP2803x_Sci.obj" \
 "./src/device/DSP2803x_SysCtrl.obj" \
 "./src/device/DSP2803x_usDelay.obj" \
+"./src/device/external_interrupt.obj" \
+"./src/device/gpio.obj" \
+"./src/device/i2c.obj" \
+"./src/device/timer.obj" \
 "./src/main.obj" \
 "../28030_RAM_lnk.cmd" \
 "../DSP2803x_Headers_nonBIOS.cmd" \
@@ -161,8 +160,8 @@ AutomotiveCard.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(GEN_MISC_FILES__QUOTED)$(GEN_FILES__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "syscfg\f2803x_pinmux.obj" "src\device\DSP2803x_Adc.obj" "src\device\DSP2803x_CodeStartBranch.obj" "src\device\DSP2803x_CpuTimers.obj" "src\device\DSP2803x_DefaultIsr.obj" "src\device\DSP2803x_ECan.obj" "src\device\DSP2803x_EQep.obj" "src\device\DSP2803x_GlobalVariableDefs.obj" "src\device\DSP2803x_Gpio.obj" "src\device\DSP2803x_I2C.obj" "src\device\DSP2803x_PieCtrl.obj" "src\device\DSP2803x_PieVect.obj" "src\device\DSP2803x_Sci.obj" "src\device\DSP2803x_SysCtrl.obj" "src\device\DSP2803x_usDelay.obj" "src\main.obj" 
-	-$(RM) "syscfg\f2803x_pinmux.d" "src\device\DSP2803x_Adc.d" "src\device\DSP2803x_CpuTimers.d" "src\device\DSP2803x_DefaultIsr.d" "src\device\DSP2803x_ECan.d" "src\device\DSP2803x_EQep.d" "src\device\DSP2803x_GlobalVariableDefs.d" "src\device\DSP2803x_Gpio.d" "src\device\DSP2803x_I2C.d" "src\device\DSP2803x_PieCtrl.d" "src\device\DSP2803x_PieVect.d" "src\device\DSP2803x_Sci.d" "src\device\DSP2803x_SysCtrl.d" "src\main.d" 
+	-$(RM) "syscfg\f2803x_pinmux.obj" "src\device\DSP2803x_CodeStartBranch.obj" "src\device\DSP2803x_DefaultIsr.obj" "src\device\DSP2803x_ECan.obj" "src\device\DSP2803x_GlobalVariableDefs.obj" "src\device\DSP2803x_PieCtrl.obj" "src\device\DSP2803x_PieVect.obj" "src\device\DSP2803x_Sci.obj" "src\device\DSP2803x_SysCtrl.obj" "src\device\DSP2803x_usDelay.obj" "src\device\external_interrupt.obj" "src\device\gpio.obj" "src\device\i2c.obj" "src\device\timer.obj" "src\main.obj" 
+	-$(RM) "syscfg\f2803x_pinmux.d" "src\device\DSP2803x_DefaultIsr.d" "src\device\DSP2803x_ECan.d" "src\device\DSP2803x_GlobalVariableDefs.d" "src\device\DSP2803x_PieCtrl.d" "src\device\DSP2803x_PieVect.d" "src\device\DSP2803x_Sci.d" "src\device\DSP2803x_SysCtrl.d" "src\device\external_interrupt.d" "src\device\gpio.d" "src\device\i2c.d" "src\device\timer.d" "src\main.d" 
 	-$(RM) "src\device\DSP2803x_CodeStartBranch.d" "src\device\DSP2803x_usDelay.d" 
 	-$(RMDIR) $(GEN_MISC_DIRS__QUOTED)
 	-@echo 'Finished clean'
