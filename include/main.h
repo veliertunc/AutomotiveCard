@@ -15,16 +15,19 @@
 #include "DSP28x_Project.h"     // Device Headerfile and Examples Include File
 #include "f2803x_pinmux.h"
 
+#include "external_interrupt.h"
 #include "timer.h"
 #include "gpio.h"
-#include "external_interrupt.h"
 #include "i2c.h"
+#include "can.h"
 // Defines
 #define DELAY (CPU_RATE/1000*6*510)  //Qual period at 6 samples
 
 // Function Prototype
 
 void InitInterrupts(void);
+
+// Global vars
 
 
 #endif /* INCLUDE_MAIN_H_ */

@@ -2,7 +2,7 @@
  * can.h
  *
  *  Created on: 28 May 2024
- *      Author: veli.ertunc
+ *      Author:
  */
 
 #ifndef INCLUDE_DEVICE_CAN_H_
@@ -10,9 +10,10 @@
 
 #include "DSP2803x_Device.h"     // DSP28 Headerfile Include File
 #include "DSP2803x_Examples.h"   // DSP28 Examples Include File
-#include <stdbool.h>
+#include "typedefs.h"
 
-void InitCANA(bool IsCANBaudSelect);
+void ECana_Transmit(Uint16 mbox_no, struct CANFrame msg);
+void ECana_Receive(Uint16 mbox_no);
 
 
 #endif /* INCLUDE_DEVICE_CAN_H_ */

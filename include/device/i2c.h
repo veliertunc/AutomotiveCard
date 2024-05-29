@@ -14,10 +14,11 @@
 #define SLAVE_ADDRESS       (0x0050)
 #define I2C_NUMBYTES        (2)
 
+
 __interrupt void i2c_int1a_isr(void);
 
 void I2CA_Init(void);
-void _initI2CInterrupts(void)
+void _initI2CInterrupts(void);
 
 Uint16 I2CA_WriteData(struct I2CMSG *msg);
 Uint16 I2CA_ReadData(struct I2CMSG *msg);

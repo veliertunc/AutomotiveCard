@@ -46,7 +46,7 @@
 #include "DSP2803x_Device.h"     // Headerfile Include File
 #include "DSP2803x_Examples.h"   // Examples Include File
 #include "timer.h"
-
+#include "global_vars.h"
 //
 // Globals
 //
@@ -152,9 +152,8 @@ void _initTimerInterrupts(void)
     // 60MHz CPU Freq, 1 second, 250ms and 100ms respectively Period (in uSeconds)
     //
     ConfigCpuTimer(&CpuTimer0, 60, 1000000);
-    ConfigCpuTimer(&CpuTimer1, 60, 250000);
-    ConfigCpuTimer(&CpuTimer2, 60, 100000); // Will be used for CAN bus data send
-
+    ConfigCpuTimer(&CpuTimer1, 60, 100000); // Will be used for CAN bus data send
+    ConfigCpuTimer(&CpuTimer2, 60, 1000000);
     //
     // To ensure precise timing, use write-only instructions to write to the
     // entire register. Therefore, if any of the configuration bits are changed
@@ -175,8 +174,8 @@ void _initTimerInterrupts(void)
     // to CPU-Timer 2:
     //
     IER |= M_INT1;
-    IER |= M_INT13;
-    IER |= M_INT14;
+    IER |= M_INT13; // Enable CPU-Timer 1 interrupt
+    IER |= M_INT14; // Enable CPU-Timer 2 interrupt
 
     //
     // Enable TINT0 in the PIE: Group 1 interrupt 7
@@ -205,7 +204,8 @@ __interrupt void cpu_timer0_isr(void)
 }
 
 //
-// cpu_timer1_isr - Timer1 counter (250ms)
+// cpu_timer1_isr - Timer1 counter (100ms)
+// Used for CAN data send and other user applications
 //
 __interrupt void cpu_timer1_isr(void)
 {
@@ -216,7 +216,7 @@ __interrupt void cpu_timer1_isr(void)
 }
 
 //
-// cpu_timer2_isr - Timer2 counter (100ms)
+// cpu_timer2_isr - Timer2 counter (1s)
 //
 __interrupt void cpu_timer2_isr(void)
 {

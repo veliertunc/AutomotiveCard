@@ -44,13 +44,7 @@
 // Included Files
 //
 #include "i2c.h"
-
-extern struct I2CMSG *CurrentMsgPtr;		// used in interrupts
-extern Uint16 PassCount;
-extern Uint16 FailCount;
-extern struct I2CMSG I2cMsgIn1;
-extern struct I2CMSG I2cMsgOut1;
-
+#include "global_vars.h"
 //
 // InitI2C - This function initializes the I2C to a known state.
 //
@@ -110,6 +104,81 @@ void InitI2CGpio()
     GpioCtrlRegs.GPBMUX1.bit.GPIO33 = 1; //Configure GPIO33 for SCLA
 
     EDIS;
+}
+
+
+__interrupt void i2c_int1a_isr(void)
+{
+    Uint16 IntSource, i;
+
+    // Read interrupt source
+    IntSource = I2caRegs.I2CISRC.all;
+    // Interrupt source = stop condition detected
+    if (IntSource == I2C_SCD_ISRC) {
+       if (I2cCurrentMsgPtr->MsgStatus == I2C_MSGSTAT_WRITE_BUSY) {
+           I2cCurrentMsgPtr->MsgStatus = I2C_MSGSTAT_INACTIVE;
+       } else {
+           // If a message receives a NACK during the address setup portion
+           // of the EEPROM read, the code further below included in the
+           // register access ready interrupt source code will generate a stop
+           // condition. After the stop condition is received (here), set the
+           // message status to try again. User may want to limit the number
+           // of retries before generating an error.
+           if (I2cCurrentMsgPtr->MsgStatus == I2C_MSGSTAT_SEND_NOSTOP_BUSY) {
+              I2cCurrentMsgPtr->MsgStatus = I2C_MSGSTAT_SEND_NOSTOP;
+           } else if (I2cCurrentMsgPtr->MsgStatus == I2C_MSGSTAT_READ_BUSY){
+               // If completed message was reading EEPROM data, reset msg to
+               // inactive state and read data from FIFO.
+               I2cCurrentMsgPtr->MsgStatus == I2C_MSGSTAT_INACTIVE;
+               for (i = 0; i < I2C_NUMBYTES; ++i) {
+                   I2cCurrentMsgPtr->MsgBuffer[i] = I2caRegs.I2CDRR;
+
+                   if(I2cMsgIn1.MsgBuffer[i] == I2cMsgOut1.MsgBuffer[i])
+                   { I2C_PassCount++; }
+                   else { I2C_FailCount++; }
+               }
+
+               if (I2C_PassCount==I2C_NUMBYTES)
+               { I2C_Pass(); }
+               else { I2C_Fail(); }
+
+           }
+       }
+    }
+    else if(IntSource == I2C_ARDY_ISRC)
+    {
+        // Interrupt source = Register Access Ready
+        // This interrupt is used to determine when the EEPROM address setup
+        // portion of the read data communication is complete. Since no stop bit is
+        // commanded, this flag tells us when the message has been sent instead of
+        // the SCD flag. If a NACK is received, clear the NACK bit and command a
+        // stop. Otherwise, move on to the read data portion of the communication.
+        if (I2caRegs.I2CSTR.bit.NACK) {
+            I2caRegs.I2CMDR.bit.STP = 1;
+            I2caRegs.I2CSTR.all = I2C_CLR_NACK_BIT;
+        } else if (I2cCurrentMsgPtr->MsgStatus == I2C_MSGSTAT_SEND_NOSTOP_BUSY) {
+            I2cCurrentMsgPtr->MsgStatus = I2C_MSGSTAT_RESTART;
+        }
+    }
+    else {
+        // Generate some error due to interrupt source
+        ;
+    }
+    //Enable future I2C (PIE Group 8) interrupts
+    PieCtrlRegs.PIEACK.all = PIEACK_GROUP8;
+}
+
+
+void _initI2CInterrupts(void)
+{
+    EALLOW;
+    PieVectTable.I2CINT1A = &i2c_int1a_isr;
+    EDIS;
+    // Enable I2C interrupt 1 in the PIE: Group 8 interupt 1
+    PieCtrlRegs.PIEIER8.bit.INTx1 = 1;
+    // Enable CPU INT8 which is connected to PIE group 8
+    IER |= M_INT8;
+    EINT;
 }
 
 void I2CA_Init(void)
@@ -197,78 +266,8 @@ void I2C_Fail()
 {
 }
 
-__interrupt void i2c_int1a_isr(void)
-{
-    Uint16 IntSource, i;
 
-    // Read interrupt source
-    IntSource = I2caRegs.I2CISRC.all;
-    // Interrupt source = stop condition detected
-    if (IntSource == I2C_SCD_ISRC) {
-       if (CurrentMsgPtr->MsgStatus == I2C_MSGSTAT_WRITE_BUSY) {
-           CurrentMsgPtr->MsgStatus = I2C_MSGSTAT_INACTIVE;
-       } else {
-           // If a message receives a NACK during the address setup portion
-           // of the EEPROM read, the code further below included in the
-           // register access ready interrupt source code will generate a stop
-           // condition. After the stop condition is received (here), set the
-           // message status to try again. User may want to limit the number
-           // of retries before generating an error.
-           if (CurrentMsgPtr->MsgStatus == I2C_MSGSTAT_SEND_NOSTOP_BUSY) {
-              CurrentMsgPtr->MsgStatus = I2C_MSGSTAT_SEND_NOSTOP;
-           } else if (CurrentMsgPtr->MsgStatus == I2C_MSGSTAT_READ_BUSY){
-               // If completed message was reading EEPROM data, reset msg to
-               // inactive state and read data from FIFO.
-               CurrentMsgPtr->MsgStatus == I2C_MSGSTAT_INACTIVE;
-               for (i = 0; i < I2C_NUMBYTES; ++i) {
-                   CurrentMsgPtr->MsgBuffer[i] = I2caRegs.I2CDRR;
 
-                   if(I2cMsgIn1.MsgBuffer[i] == I2cMsgOut1.MsgBuffer[i])
-                   { PassCount++; }
-                   else { FailCount++; }
-               }
-
-               if (PassCount==I2C_NUMBYTES)
-               { I2C_Pass(); }
-               else { I2C_Fail(); }
-
-           }
-       }
-    }
-    else if(IntSource == I2C_ARDY_ISRC)
-    {
-        // Interrupt source = Register Access Ready
-        // This interrupt is used to determine when the EEPROM address setup
-        // portion of the read data communication is complete. Since no stop bit is
-        // commanded, this flag tells us when the message has been sent instead of
-        // the SCD flag. If a NACK is received, clear the NACK bit and command a
-        // stop. Otherwise, move on to the read data portion of the communication.
-        if (I2caRegs.I2CSTR.bit.NACK) {
-            I2caRegs.I2CMDR.bit.STP = 1;
-            I2caRegs.I2CSTR.all = I2C_CLR_NACK_BIT;
-        } else if (CurrentMsgPtr->MsgStatus == I2C_MSGSTAT_SEND_NOSTOP_BUSY) {
-            CurrentMsgPtr->MsgStatus = I2C_MSGSTAT_RESTART;
-        }
-    }
-    else {
-        // Generate some error due to interrupt source
-        ;
-    }
-    //Enable future I2C (PIE Group 8) interrupts
-    PieCtrlRegs.PIEACK.all = PIEACK_GROUP8;
-}
-
-void _initI2CInterrupts()
-{
-    EALLOW;
-    PieVectTable.I2CINT1A = &i2c_int1a_isr;
-    EDIS;
-    // Enable I2C interrupt 1 in the PIE: Group 8 interupt 1
-    PieCtrlRegs.PIEIER8.bit.INTx1 = 1;
-    // Enable CPU INT8 which is connected to PIE group 8
-    IER |= M_INT8;
-    EINT;
-}
 
 //
 // End of file

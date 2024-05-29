@@ -4,11 +4,7 @@
  *  Created on: 28 May 2024
  */
 #include "external_interrupt.h"
-
-extern Uint32 LoopCount;
-
-extern volatile Uint32 set_plus_cnt;
-extern volatile Uint32 set_minus_cnt;
+#include "global_vars.h"
 
 void _initExtInterrupts(void)
 {
@@ -20,7 +16,7 @@ void _initExtInterrupts(void)
 
     set_plus_cnt = 0; // Count XINT1 interrupts
     set_minus_cnt = 0;
-    LoopCount = 0;  // Count times through idle loop
+    idle_loop_count = 0;  // Count times through idle loop
 
     //Enable groups and interrupts
     PieCtrlRegs.PIECTRL.bit.ENPIE = 1;          // Enable the PIE block

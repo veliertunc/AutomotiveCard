@@ -44,13 +44,47 @@
 // Included Files
 //
 #include "can.h"
+#include "global_vars.h"
 
+void InitECan(void)
+{
+    InitECana();
+    // Create a shadow register structure for the CAN control registers.
+    // This is needed, since only 32-bit access is allowed to these registers.
+    // 16-bit access to these registers could potentially corrupt the register
+    // contents or return false data.
+    struct ECAN_REGS ECanaShadow;
+    //
+    // Configure Mailboxes 0-15 as Tx, 16-31 as Rx
+    // Since this write is to the entire register (instead of a bit field)
+    // a shadow register is not required.
+    //
+    ECanaRegs.CANMD.all = 0xFFFF0000;
+    //
+    // Enable all Mailboxes
+    // Since this write is to the entire register (instead of a bit field)
+    // a shadow register is not required.
+    //
+    ECanaRegs.CANME.all = 0xFFFFFFFF;
+
+    // Enable all Mailbox Interrupts
+    EALLOW;
+    ECanaRegs.CANMIM.all = 0xFFFFFFFF;
+    EDIS
+
+    // Configure the eCAN for self test mode
+    // Enable the enhanced features of the eCAN.
+    EALLOW;
+    ECanaShadow.CANMC.all = ECanaRegs.CANMC.all;
+    ECanaShadow.CANMC.bit.STM = 1;          // Configure CAN for self-test mode
+    ECanaRegs.CANMC.all = ECanaShadow.CANMC.all;
+    EDIS
+}
 
 //
-// InitCANA - This function initializes the eCAN module to a known state.
-// @param IsCANBaudSelect : Baud rate is 500K if true, 250K otherwise.
+// InitEcana- This function initializes the eCAN module to a known state.
 //
-void InitCANA(bool IsCANBaudSelect)
+void InitECana()
 {
     // Create a shadow register structure for the CAN control registers.
     // This is needed, since only 32-bit access is allowed to these registers.
@@ -137,9 +171,25 @@ void InitCANA(bool IsCANBaudSelect)
     // The following block is only for 60 MHz SYSCLKOUT.
     // (30 MHz CAN module clock Bit rate = 1 Mbps)
     // See Note at end of file.
-    ECanaShadow.CANBTC.bit.BRPREG = 2;
-    ECanaShadow.CANBTC.bit.TSEG2REG = 1;
-    ECanaShadow.CANBTC.bit.TSEG1REG = 6;
+    // ECanaShadow.CANBTC.bit.BRPREG = 2;
+    // ECanaShadow.CANBTC.bit.TSEG2REG = 1;
+    // ECanaShadow.CANBTC.bit.TSEG1REG = 6;
+
+    // Used http://www.bittiming.can-wiki.info/ as a reference
+    // 60MHz clock , %87.5 sample-point, SJW=1
+    if (IsCANBaudSelect) {
+        // 500K Prescaler = 8, Seg1 = 12, Seg = 2
+        // CAN_BTC = 0x0007_0059
+        ECanaShadow.CANBTC.bit.BRPREG = 8;
+        ECanaShadow.CANBTC.bit.TSEG1REG = 12;
+        ECanaShadow.CANBTC.bit.TSEG2REG = 2;
+    } else {
+        // 250K Prescaler = 15, Seg1 = 13, Seg = 2
+        // CAN_BTC = 0x000e_0061
+        ECanaShadow.CANBTC.bit.BRPREG = 15;
+        ECanaShadow.CANBTC.bit.TSEG1REG = 13;
+        ECanaShadow.CANBTC.bit.TSEG2REG = 2;
+    }
 
     ECanaShadow.CANBTC.bit.SAM = 0;
     ECanaRegs.CANBTC.all = ECanaShadow.CANBTC.all;
@@ -212,16 +262,165 @@ void InitECanaGpio(void)
     EDIS;
 }
 
-//
-// Note: Bit timing parameters must be chosen based on the network parameters
-// such as the sampling point desired and the propagation delay of the network.
-// The propagation delay is a function of length of the cable, delay introduced
-// by the transceivers and opto/galvanic-isolators (if any).
-//
-// The parameters used in this file must be changed taking into account the 
-// above mentioned factors in order to arrive at the bit-timing parameters
-// suitable for a network.
-//
+void ECana_Transmit(Uint16 mbox_no = 0, struct CANFrame msg){
+    if(mbox_no > 31){
+        return;
+    }
+
+    // Mailboxes 0-15 -> Transmit
+    // Mailboxes 16-31 -> Receive
+    switch (mbox_no) {
+        case 0:
+            ECanaMboxes.MBOX0.MSGID.all = msg.ID;
+            ECanaMboxes.MBOX0.MSGCTRL.bit.DLC = msg.DLC;
+            ECanaMboxes.MBOX0.MDL.all = msg.LowBytes;
+            if (dlc>4) {
+                ECanaMboxes.MBOX0.MDH.all = msg.HighBytes;
+            }
+            break;
+        case 1:
+            ECanaMboxes.MBOX1.MSGID.all = msg.ID;
+            ECanaMboxes.MBOX1.MSGCTRL.bit.DLC = msg.DLC;
+            ECanaMboxes.MBOX1.MDL.all = msg.LowBytes;
+            if (dlc>4) {
+                ECanaMboxes.MBOX1.MDH.all = msg.HighBytes;
+            }
+            break;
+        case 2:
+            ECanaMboxes.MBOX2.MSGID.all = msg.ID;
+            ECanaMboxes.MBOX2.MSGCTRL.bit.DLC = msg.DLC;
+            ECanaMboxes.MBOX2.MDL.all = msg.LowBytes;
+            if (dlc>4) {
+                ECanaMboxes.MBOX2.MDH.all = msg.HighBytes;
+            }
+            break;
+        case 3:
+            ECanaMboxes.MBOX3.MSGID.all = msg.ID;
+            ECanaMboxes.MBOX3.MSGCTRL.bit.DLC = msg.DLC;
+            ECanaMboxes.MBOX3.MDL.all = msg.LowBytes;
+            if (dlc>4) {
+                ECanaMboxes.MBOX3.MDH.all = msg.HighBytes;
+            }
+            break;
+        case 4:
+            ECanaMboxes.MBOX4.MSGID.all = msg.ID;
+            ECanaMboxes.MBOX4.MSGCTRL.bit.DLC = msg.DLC;
+            ECanaMboxes.MBOX4.MDL.all = msg.LowBytes;
+            if (dlc>4) {
+                ECanaMboxes.MBOX4.MDH.all = msg.HighBytes;
+            }
+            break;
+        case 5:
+            ECanaMboxes.MBOX5.MSGID.all = msg.ID;
+            ECanaMboxes.MBOX5.MSGCTRL.bit.DLC = msg.DLC;
+            ECanaMboxes.MBOX5.MDL.all = msg.LowBytes;
+            if (dlc>4) {
+                ECanaMboxes.MBOX5.MDH.all = msg.HighBytes;
+            }
+            break;
+        case 6:
+            ECanaMboxes.MBOX6.MSGID.all = msg.ID;
+            ECanaMboxes.MBOX6.MSGCTRL.bit.DLC = msg.DLC;
+            ECanaMboxes.MBOX6.MDL.all = msg.LowBytes;
+            if (dlc>4) {
+                ECanaMboxes.MBOX6.MDH.all = msg.HighBytes;
+            }
+            break;
+        case 7:
+            ECanaMboxes.MBOX7.MSGID.all = msg.ID;
+            ECanaMboxes.MBOX7.MSGCTRL.bit.DLC = msg.DLC;
+            ECanaMboxes.MBOX7.MDL.all = msg.LowBytes;
+            if (dlc>4) {
+                ECanaMboxes.MBOX7.MDH.all = msg.HighBytes;
+            }
+            break;
+        case 8:
+            ECanaMboxes.MBOX8.MSGID.all = msg.ID;
+            ECanaMboxes.MBOX8.MSGCTRL.bit.DLC = msg.DLC;
+            ECanaMboxes.MBOX8.MDL.all = msg.LowBytes;
+            if (dlc>4) {
+                ECanaMboxes.MBOX8.MDH.all = msg.HighBytes;
+            }
+            break;
+        case 9:
+            ECanaMboxes.MBOX9.MSGID.all = msg.ID;
+            ECanaMboxes.MBOX9.MSGCTRL.bit.DLC = msg.DLC;
+            ECanaMboxes.MBOX9.MDL.all = msg.LowBytes;
+            if (dlc>4) {
+                ECanaMboxes.MBOX9.MDH.all = msg.HighBytes;
+            }
+            break;
+        case 10:
+            ECanaMboxes.MBOX10.MSGID.all = msg.ID;
+            ECanaMboxes.MBOX10.MSGCTRL.bit.DLC = msg.DLC;
+            ECanaMboxes.MBOX10.MDL.all = msg.LowBytes;
+            if (dlc>4) {
+                ECanaMboxes.MBOX10.MDH.all = msg.HighBytes;
+            }
+            break;
+        case 11:
+            ECanaMboxes.MBOX11.MSGID.all = msg.ID;
+            ECanaMboxes.MBOX11.MSGCTRL.bit.DLC = msg.DLC;
+            ECanaMboxes.MBOX11.MDL.all = msg.LowBytes;
+            if (dlc>4) {
+                ECanaMboxes.MBOX11.MDH.all = msg.HighBytes;
+            }
+            break;
+        case 12:
+            ECanaMboxes.MBOX12.MSGID.all = msg.ID;
+            ECanaMboxes.MBOX12.MSGCTRL.bit.DLC = msg.DLC;
+            ECanaMboxes.MBOX12.MDL.all = msg.LowBytes;
+            if (dlc>4) {
+                ECanaMboxes.MBOX12.MDH.all = msg.HighBytes;
+            }
+            break;
+        case 13:
+            ECanaMboxes.MBOX13.MSGID.all = msg.ID;
+            ECanaMboxes.MBOX13.MSGCTRL.bit.DLC = msg.DLC;
+            ECanaMboxes.MBOX13.MDL.all = msg.LowBytes;
+            if (dlc>4) {
+                ECanaMboxes.MBOX13.MDH.all = msg.HighBytes;
+            }
+            break;
+        case 14:
+            ECanaMboxes.MBOX14.MSGID.all = msg.ID;
+            ECanaMboxes.MBOX14.MSGCTRL.bit.DLC = msg.DLC;
+            ECanaMboxes.MBOX14.MDL.all = msg.LowBytes;
+            if (dlc>4) {
+                ECanaMboxes.MBOX14.MDH.all = msg.HighBytes;
+            }
+            break;
+        case 15:
+            ECanaMboxes.MBOX15.MSGID.all = msg.ID;
+            ECanaMboxes.MBOX15.MSGCTRL.bit.DLC = msg.DLC;
+            ECanaMboxes.MBOX15.MDL.all = msg.LowBytes;
+            if (dlc>4) {
+                ECanaMboxes.MBOX15.MDH.all = msg.HighBytes;
+            }
+            break;
+        default:
+            break;
+    }
+
+    //struct ECAN_REGS shadow;
+    ECanaRegs.CANTRS.all = (1U << mbox_no);
+    // Wait for TAn bit to be set
+    while((ECanaRegs.CANTA.all >> mbox_no) & 0x1);
+    // Clear TAn bit
+    ECanaRegs.CANTA.all = (1UL << mbox_no);
+
+}
+
+void ECana_Receive(Uint16 mbox_no){
+    volatile struct MBOX *mbox;
+    mbox = &ECanaMboxes.MBOX0 + mbox_no;
+    CANLastFrameReceived.ID = mbox->MSGID.all;
+    CANLastFrameReceived.IsRTR = (bool)mbox->MSGCTRL.bit.RTR;
+    CANLastFrameReceived.DLC = mbox->MSGCTRL.bit.DLC;
+    CANLastFrameReceived.LowBytes = mbox->MDL.all;
+    CANLastFrameReceived.HighBytes = mbox->MDH.all;
+
+}
 
 //
 // End of file
