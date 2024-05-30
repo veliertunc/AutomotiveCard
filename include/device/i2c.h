@@ -11,8 +11,9 @@
 #include "DSP2803x_Device.h"     // DSP2803x Headerfile Include File
 #include "DSP2803x_Examples.h"   // DSP2803x Examples Include File
 
-#define SLAVE_ADDRESS       (0x0050)
-#define I2C_NUMBYTES        (2)
+// Slave address for CAV24C04 0101_0001 (0x51) (from 1010_A2A1a0)
+#define EEPROM_SLAVE_ADDRESS       (0x0051)
+#define I2C_NUMBYTES               (2)
 
 
 __interrupt void i2c_int1a_isr(void);
