@@ -32,6 +32,10 @@ extern Uint16 I2cFailCount;
 extern struct I2CMSG I2cMsgIn1;
 extern struct I2CMSG I2cMsgOut1;
 
+// EEPROM global variables (will add more later)
+extern Uint32 NodeId;
+
+
 // CAN Global variables
 extern struct CANFrame CANLastFrameReceived;
 extern struct CANFrame CANFrameToSend;

@@ -20,6 +20,7 @@
 #include "gpio.h"
 #include "i2c.h"
 #include "can.h"
+#include "eeprom.h"
 // Defines
 #define DELAY (CPU_RATE/1000*6*510)  //Qual period at 6 samples
 
