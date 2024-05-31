@@ -34,5 +34,6 @@ extern struct I2CMSG I2cMsgOut1;
 
 // CAN Global variables
 extern struct CANFrame CANLastFrameReceived;
+extern struct CANFrame CANFrameToSend;
 
 #endif /* INCLUDE_GLOBAL_VARS_H_ */
